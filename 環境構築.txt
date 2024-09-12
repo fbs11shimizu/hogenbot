@@ -1,0 +1,18 @@
+#環境構築（streamlitでhelloworldまで）
+
+## 前提（要インストール）
+vscode
+vscode拡張機能 devcontainer
+DockerDesktop
+Git
+
+## 資産ダウンロード
+git clone 
+
+## コンテナにvscodeでアクセス
+cd hogenbot/web
+docker image build -t hogenbot .
+docker container run -it -p 8501:8501 hogenbot
+
+## 
+docker container run -it -p 8501:8501 hogenbot
