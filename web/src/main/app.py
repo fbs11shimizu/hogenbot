@@ -1,36 +1,61 @@
-import os
-# import httpx
-import streamlit as st
-# import pandas as pd
-# from typing import List
+import streamlit as st 
+import numpy as np 
+import json
+import requests
 
-st.title('Streamlit')
-st.header('Hello World')
-st.text('streamlit初心者です')
+st.title('Databricks Q&A bot')
+#st.header('Databricks Q&A bot')
 
-# def format_results(result_files: List[str]) -> pd.DataFrame:
-#     job_indices, filenames = [], []
-#     for _, job_id, filename in map(lambda s: s.split('/'), result_files):
-#         job_indices.append(job_id)
-#         filenames.append(filename)
-#     df = pd.DataFrame({'job_id': job_indices, 'filename': filenames})
-#     return df
+def generate_answer(question):
+  # Driver Proxyと異なるクラスター、ローカルからDriver Proxyにアクセスする際にはパーソナルアクセストークンを設定してください
+  token = "" 
+  url = "http://localhost:8501/"
+
+  headers = {
+      "Content-Type": "application/json",
+      "Authentication": f"Bearer {token}"
+  }
+  data = {
+    "prompt": question
+  }
+
+  response = requests.post(url, headers=headers, data=json.dumps(data))
+  if response.status_code != 200:
+    raise Exception(
+       f"Request failed with status {response.status_code}, {response.text}"
+    )
+  
+  response_json = response.json()
+  return response_json
 
 
-# API_HOST = os.environ.get('API_HOST', '127.0.0.1:80')
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
+# アプリの再実行の際に履歴のチャットメッセージを表示
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
+# ユーザー入力に対する反応
+if prompt := st.chat_input("Databricksに関して何を知りたいですか？"):
+    # チャットメッセージコンテナにユーザーメッセージを表示
+    st.chat_message("user").markdown(prompt)
+    # チャット履歴にユーザーメッセージを追加
+    st.session_state.messages.append({"role": "user", "content": prompt})
 
-# if len(image_files) > 0 and st.button('Submit'):
-#     files = [('files', file) for file in image_files]
+    with st.spinner('回答を生成中...'):
+      bot_response = generate_answer(prompt)
+      answer = bot_response["answer"]
+      source = bot_response["source"]
 
-#     r = httpx.post(f'http://{API_HOST}/predict', files=files)
-#     st.success(r.json())
+      response = f"""{answer} 
 
+**ソース:** {source}"""
 
-# if st.button('Refresh'):
-#     st.success('Refreshed')
-    
-# r = httpx.get(f'http://{API_HOST}/results')
-# df_results = format_results(r.json())
-# st.write(df_results)
+    # チャットメッセージコンテナにアシスタントのレスポンスを表示
+    with st.chat_message("assistant"):
+      st.markdown(response)
+
+    # チャット履歴にアシスタントのレスポンスを追加
+    st.session_state.messages.append({"role": "assistant", "content": response})
