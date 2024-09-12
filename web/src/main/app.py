@@ -8,7 +8,7 @@ st.title('Databricks Q&A bot')
 
 def generate_answer(question):
   # Driver Proxyと異なるクラスター、ローカルからDriver Proxyにアクセスする際にはパーソナルアクセストークンを設定してください
-  token = "" 
+  token = ""
   url = "http://localhost:8501/"
 
   headers = {
