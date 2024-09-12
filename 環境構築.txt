@@ -12,7 +12,8 @@ git clone
 ## コンテナにvscodeでアクセス
 cd hogenbot/web
 docker image build -t hogenbot .
-docker container run -it -p 8501:8501 hogenbot
+docker image ls
+docker container run -it hogenbot
 
 ## 
 docker container run -it -p 8501:8501 hogenbot
