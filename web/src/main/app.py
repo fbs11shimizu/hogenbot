@@ -3,8 +3,20 @@ import numpy as np
 import json
 import requests
 
-st.title('Databricks Q&A bot')
+st.title('方言Chat Bot')
 #st.header('Databricks Q&A bot')
+
+
+
+# 3つのカラムを作成
+col1, col2, col3 = st.columns([2, 2, 1])
+# 右上にボタンを配置
+with col3:
+    if st.button("クリア"):
+        st.session_state.messages = [{"role": "assistant", "content":"なんでも質問してや"}]
+        
+
+
 
 def generate_answer(question):
   # Driver Proxyと異なるクラスター、ローカルからDriver Proxyにアクセスする際にはパーソナルアクセストークンを設定してください
@@ -30,15 +42,17 @@ def generate_answer(question):
 
 
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = [{"role": "assistant", "content":"なんでも質問してや"}]
 
 # アプリの再実行の際に履歴のチャットメッセージを表示
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+
+
 # ユーザー入力に対する反応
-if prompt := st.chat_input("Databricksに関して何を知りたいですか？"):
+if prompt := st.chat_input("質問をどうぞ"):
     # チャットメッセージコンテナにユーザーメッセージを表示
     st.chat_message("user").markdown(prompt)
     # チャット履歴にユーザーメッセージを追加
