@@ -8,9 +8,6 @@ from openai import AzureOpenAI
 from dotenv import load_dotenv
 
 st.title('方言Chat Bot')
-#st.header('Databricks Q&A bot')
-
-
 
 # 3つのカラムを作成
 col1, col2, col3 = st.columns([2, 2, 1])
@@ -18,19 +15,16 @@ col1, col2, col3 = st.columns([2, 2, 1])
 with col3:
     if st.button("クリア"):
         st.session_state.messages = [{"role": "assistant", "content":"なんでも質問してや"}]
-        
-
-
 
 def generate_answer(question):
   load_dotenv()
-
+  
   # クライアント設定方法
   client = AzureOpenAI(
     azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT"),
     api_key = os.getenv("AZURE_OPENAI_API_KEY"),
-    api_version = os.getenv("AZURE_OPENAI_API_KEY")
-    )
+    api_version = os.getenv("AZURE_OPENAI_API_VERSION")
+  )
 
   # API呼出方法
   response = client.chat.completions.create(
@@ -41,7 +35,6 @@ def generate_answer(question):
   )
   return response
 
-
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content":"なんでも質問してや"}]
 
@@ -49,8 +42,6 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
-
-
 
 # ユーザー入力に対する反応
 if prompt := st.chat_input("質問をどうぞ"):
@@ -70,6 +61,3 @@ if prompt := st.chat_input("質問をどうぞ"):
 
     # チャット履歴にアシスタントのレスポンスを追加
     st.session_state.messages.append({"role": "assistant", "content": response})
-
-
-  
