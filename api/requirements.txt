@@ -1,0 +1,6 @@
+numpy
+datasets
+transformers
+llama-cpp-python
+azureml-mlflow
+azureml-inference-server-http
